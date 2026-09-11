@@ -1,31 +1,47 @@
-# Point your AI agent at this kit
+# Use this kit with your coding agent
 
-Clone the kit, `cd` into it, then:
+You don’t install a WordPress add-on. You **open this folder**. That’s the whole trick.
 
-## Grok
-
-```toml
-# ~/.grok/config.toml
-[skills]
-paths = ["/ABS/PATH/wordpress-agency-kit/skills"]
+```bash
+git clone https://github.com/AmanSarraf/wordpress-agency-kit.git
+cd wordpress-agency-kit
+./bin/wp-agency doctor
 ```
 
-Open the kit folder (or a client project) as the workspace. Read `AGENTS.md`.
+Then start the agent **inside this directory**.
 
-Optional Hostinger MCP: `npx -y @hostinger/mcp --login` then add stdio server `npx -y @hostinger/mcp`.
+## Codex CLI
+
+```bash
+cd wordpress-agency-kit
+codex
+```
+
+Try:
+
+> Read AGENTS.md. Run doctor. Create a client called demo from empty.
 
 ## Claude Code
 
-Open the kit repo. `CLAUDE.md` + `.claude/skills` → `skills/` already.
-
 ```bash
-claude mcp add --transport http hostinger https://mcp.hostinger.com   # optional
+cd wordpress-agency-kit
+claude
 ```
+
+Skills in `skills/` load automatically.
+
+## Grok
+
+Open `wordpress-agency-kit` as the workspace. Optional: add `skills/` to your Grok skills paths.
 
 ## Cursor
 
-Open the kit. Rule: `.cursor/rules/wordpress-agency-kit.mdc`. Add Hostinger Connector or MCP JSON as you prefer.
+**File → Open Folder** → `wordpress-agency-kit`. Chat as usual.
 
-## Codex / Copilot / OpenCode
+## Copilot / OpenCode / others
 
-Open the kit so `AGENTS.md` and `.github/copilot-instructions.md` load. Run doctor in the terminal; the agent should follow AGENTS.md.
+Open the same folder. They should pick up `AGENTS.md`.
+
+---
+
+If the agent asks where client sites go: default is `../client-projects/` next to the kit.

@@ -1,80 +1,174 @@
 # WordPress Agency Kit
 
-**AI-assisted WordPress development for agencies and freelancers.**
+<p align="center">
+  <img src="docs/assets/hero.jpg" alt="A WordPress builder at a calm desk, turning ideas into a live site" width="920">
+</p>
 
-Not a WordPress plugin. A **kit** your coding agent (Grok, Claude Code, Cursor, Codex, Copilot, OpenCode, …) reads so every developer on the team scaffolds, converts, and deploys WordPress the same way.
+<p align="center">
+  <strong>Your AI teammate for everyday WordPress work.</strong><br>
+  Drop in a design or an existing site. Get a local preview. Keep going with the coding agent you already use.
+</p>
 
-```text
-HTML/CSS zip  ─┐
-               ├─►  ./bin/wp-agency new  ─►  Docker WordPress  ─►  Hostinger
-WP dump zip  ─┘         (local client folder)
+<p align="center">
+  <a href="#start-in-5-minutes">Get started</a> ·
+  <a href="#open-it-in-your-coding-agent">Codex, Claude, Cursor, Grok</a> ·
+  <a href="#what-you-can-ask">What to say</a>
+</p>
+
+---
+
+If you build WordPress sites for clients — and you want AI to handle the boring parts — this kit is for you.
+
+Clone it. Open the folder in **Codex CLI**, Claude Code, Cursor, Grok, Copilot, or any similar tool. The agent already knows how you like to work.
+
+---
+
+## How it feels
+
+<p align="center">
+  <img src="docs/assets/flow.jpg" alt="From a zip on your laptop, to a local preview, to a live shop" width="920">
+</p>
+
+<p align="center"><em>Bring a zip → see it locally → keep building with AI.</em></p>
+
+```mermaid
+flowchart LR
+  A[Your zip or a blank start] --> B[One command creates the project]
+  B --> C[Site on your computer]
+  C --> D[You and your AI finish the work]
 ```
 
-## What you get
+You might start with:
 
-- **`bin/wp-agency doctor`** — checks Docker, Compose, Git; tells you how to install what’s missing
-- **`bin/wp-agency new`** — creates `../client-projects/<slug>` with unique ports, `.env`, Compose, starter theme
-- **Skills** for HTML→classic theme, WP zip import, plugins, blocks, REST, Hostinger sibling PHP apps (POS/billing)
-- **`AGENTS.md`** so any agent follows the same rules
+- a pretty **HTML/CSS** template you bought
+- a **copy of a live WordPress site**
+- or **nothing** — a fresh local WordPress
 
-## 3-minute start
+The kit keeps each client in its own folder, so you can run more than one site without mixing them up.
+
+---
+
+## Start in 5 minutes
+
+**1. Copy the kit**
 
 ```bash
-git clone <this-repo> wordpress-agency-kit
+git clone https://github.com/AmanSarraf/wordpress-agency-kit.git
 cd wordpress-agency-kit
-./bin/wp-agency doctor          # install anything marked [x], then re-run
-./bin/wp-agency new demo --from empty
-cd ../client-projects/demo
-docker compose up -d
-# open http://localhost:8080 — WordPress installer
 ```
 
-Open **this kit folder** (or the new client folder) in your AI agent and say:
-
-> Follow AGENTS.md. Convert this HTML zip into a classic theme.
-
-## Two workflows
-
-| You have | Command | Then ask the agent to |
-|---|---|---|
-| ThemeForest / HTML template | `new shop --from html --zip template.zip` | Use skill **html-to-classic-theme** |
-| Hostinger / `public_html` dump | `new shop --from wp-zip --zip site.zip` | Use skill **wp-zip-import** |
-
-Docs: [HTML workflow](docs/workflow-html-template.md) · [WP zip workflow](docs/workflow-wp-zip.md) · [Where projects live](docs/project-layout.md)
-
-## Multiple clients
-
-Each project gets its own `COMPOSE_PROJECT_NAME` and ports (`8080/8081`, `8082/8083`, …).
+**2. Check your computer**
 
 ```bash
-./bin/wp-agency ports
+./bin/wp-agency doctor
 ```
 
-## Point your agent here
+If something is missing (often Docker), it tells you what to install — in plain language. Fix those, then run `doctor` again until it says you’re ready.
 
-[Grok / Claude / Cursor / Codex / Copilot](docs/install-agents.md)
+**3. Start a site**
 
-Optional MCPs (Playwright, Context7, Hostinger): [docs/mcp.md](docs/mcp.md)
+```bash
+./bin/wp-agency new my-shop --from empty
+cd ../client-projects/my-shop
+docker compose up -d
+```
 
-## Layout
+Open [http://localhost:8080](http://localhost:8080) and finish the WordPress welcome screens.
+
+That’s it. Your “install” is: **clone + open this folder in your agent.**
+
+---
+
+## Open it in your coding agent
+
+Treat this folder the way you’d add a skill pack: **the project is the skill.**
+
+| You use | Do this |
+|---|---|
+| **Codex CLI** | `cd wordpress-agency-kit` then `codex` |
+| **Claude Code** | `cd wordpress-agency-kit` then `claude` |
+| **Grok** | Open this folder as the workspace |
+| **Cursor** | File → Open Folder → `wordpress-agency-kit` |
+| **GitHub Copilot / others** | Open this folder; they pick up `AGENTS.md` |
+
+Then say something simple:
+
+> Get my machine ready, then start a new client called sunrise-cafe.
+
+or
+
+> I have a ThemeForest zip on my Desktop. Turn it into a WordPress theme.
+
+The file `AGENTS.md` is the playbook. You don’t have to memorize it.
+
+More detail: [docs/install-agents.md](docs/install-agents.md)
+
+---
+
+## What you can ask
+
+| You have | You run | Then tell the agent |
+|---|---|---|
+| Nothing yet | `./bin/wp-agency new cafe --from empty` | “Walk me through the local site.” |
+| An HTML template zip | `./bin/wp-agency new cafe --from html --zip ~/Downloads/theme.zip` | “Turn this template into a WordPress theme.” |
+| A copy of a live WordPress site | `./bin/wp-agency new cafe --from wp-zip --zip ~/Downloads/site.zip` | “Get this dump running locally.” |
+
+Handy extras:
+
+```bash
+./bin/wp-agency ports          # which local sites are using which ports
+./bin/wp-agency help
+```
+
+Guides: [HTML template](docs/workflow-html-template.md) · [Existing WordPress zip](docs/workflow-wp-zip.md) · [Where files live](docs/project-layout.md)
+
+---
+
+## Everyday help
+
+Once a project is open, your agent can help you:
+
+- match a design to a real WordPress theme
+- add pages, menus, and shop-style content
+- keep several client sites on one computer
+- prepare a site to go live
+- write a short handover for the client
+
+You stay in charge. The kit just makes the first hour — and the next ten — less messy.
+
+---
+
+## Several clients at once
+
+Each new site gets its own folder and its own local address (8080, then 8082, and so on).
 
 ```text
-wordpress-agency-kit/
-  bin/wp-agency          doctor | new | ports
-  skills/                agent skills (also .claude/skills)
-  templates/docker/      slim Compose + Agency Starter theme
-  AGENTS.md              source of truth for every agent
-  ../client-projects/    created on your machine, not inside the kit
+wordpress-agency-kit/          ← you cloned this
+../client-projects/
+    my-shop/
+    sunrise-cafe/
 ```
 
-## Requirements
+Want a different place for clients? Set `WP_AGENCY_CLIENTS_DIR`.
 
-- Git
-- Docker Desktop / Engine with **Compose v2** (`docker compose`)
-- `unzip` for html / wp-zip imports
+---
 
-`doctor` prints OS-specific install links if anything is missing. It never sudo-installs for you.
+## If you’re missing Docker
+
+`./bin/wp-agency doctor` will say so.
+
+- **Mac:** [Docker Desktop for Mac](https://docs.docker.com/desktop/setup/install/mac-install/) (or `brew install --cask docker`)
+- **Windows:** [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+- **Linux:** [Docker Engine](https://docs.docker.com/engine/install/)
+
+Start Docker, then run `doctor` again.
+
+---
 
 ## License
 
-MIT
+MIT. Use it on client work, fork it, share it with a friend.
+
+---
+
+<p align="center">Made for people who ship WordPress sites — with a little help from AI.</p>
