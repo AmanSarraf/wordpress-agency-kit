@@ -28,3 +28,18 @@ pre code {
 footer img {
   border-radius: 6px;
 }
+
+.site-footer {
+  background: #1b1b1d;
+  color: #e3e6ea;
+}
+
+.site-footer a {
+  color: #c6d4cc;
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
