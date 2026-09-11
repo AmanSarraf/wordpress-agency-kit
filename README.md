@@ -1,8 +1,9 @@
 # WordPress Agency Kit
 
 <p align="center">
-  <img src="docs/assets/hero.jpg" alt="A WordPress builder at a calm desk, turning ideas into a live site" width="920">
+  <img src="docs/assets/hero.jpg" alt="Laptop on a desk with a website and code open — building WordPress locally" width="920">
 </p>
+<p align="center"><sub>Photo: <a href="https://unsplash.com/photos/cGwfkwHdeLs">Christopher Gower</a> on <a href="https://unsplash.com">Unsplash</a></sub></p>
 
 <p align="center">
   <strong>Your AI teammate for everyday WordPress work.</strong><br>
@@ -25,11 +26,7 @@ Clone it. Open the folder in **Codex CLI**, Claude Code, Cursor, Grok, Copilot, 
 
 ## How it feels
 
-<p align="center">
-  <img src="docs/assets/flow.jpg" alt="From a zip on your laptop, to a local preview, to a live shop" width="920">
-</p>
-
-<p align="center"><em>Bring a zip → see it locally → keep building with AI.</em></p>
+Bring a zip → see it on your computer → keep building with AI.
 
 ```mermaid
 flowchart LR
