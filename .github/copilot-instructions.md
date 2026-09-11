@@ -1,0 +1,1 @@
+Follow AGENTS.md in the repository root. This is a WordPress agency kit for AI coding agents, not a WordPress plugin. Use `./bin/wp-agency doctor` then `./bin/wp-agency new`. Client projects belong in `../client-projects/`.

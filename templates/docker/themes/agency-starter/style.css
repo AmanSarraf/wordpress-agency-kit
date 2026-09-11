@@ -1,0 +1,32 @@
+/*
+Theme Name: Agency Starter
+Theme URI: https://github.com/basicneedsolution/wordpress-agency-kit
+Author: WordPress Agency Kit
+Description: Minimal classic theme shipped with the kit so bind-mounted ./themes is never empty. Replace or add your client theme beside this folder.
+Version: 1.0.0
+License: MIT
+Text Domain: agency-starter
+*/
+
+:root {
+  --agency-bg: #f6f4f8;
+  --agency-ink: #1b1525;
+  --agency-brand: #845ec2;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--agency-bg);
+  color: var(--agency-ink);
+}
+
+.site {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem;
+}
+
+.site a {
+  color: var(--agency-brand);
+}

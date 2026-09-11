@@ -1,0 +1,298 @@
+#!/usr/bin/env bash
+# WordPress Agency Kit — doctor, new project, port map
+set -euo pipefail
+
+KIT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CLIENTS_DIR="${WP_AGENCY_CLIENTS_DIR:-$KIT_ROOT/../client-projects}"
+
+usage() {
+  cat <<EOF
+WordPress Agency Kit
+
+Usage:
+  wp-agency doctor
+  wp-agency ports
+  wp-agency new <slug> [--from empty|html|wp-zip] [--zip PATH]
+  wp-agency help
+
+Environment:
+  WP_AGENCY_CLIENTS_DIR   Where client projects live
+                          (default: $KIT_ROOT/../client-projects)
+
+Examples:
+  ./bin/wp-agency doctor
+  ./bin/wp-agency new acme-bakery --from empty
+  ./bin/wp-agency new acme --from html --zip ~/Downloads/theme.zip
+  ./bin/wp-agency new acme --from wp-zip --zip ~/Downloads/public_html.zip
+EOF
+}
+
+log()  { printf '  %s\n' "$*"; }
+ok()   { printf '  [ok]  %s\n' "$*"; }
+warn() { printf '  [!!]  %s\n' "$*"; }
+fail() { printf '  [x]   %s\n' "$*"; }
+
+need_cmd() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+os_hint_docker() {
+  case "$(uname -s)" in
+    Darwin) echo 'macOS: https://docs.docker.com/desktop/setup/install/mac-install/   or: brew install --cask docker' ;;
+    Linux)  echo 'Linux: https://docs.docker.com/engine/install/   then install Docker Compose v2 plugin' ;;
+    MINGW*|MSYS*|CYGWIN*|Windows_NT) echo 'Windows: https://docs.docker.com/desktop/setup/install/windows-install/' ;;
+    *) echo 'Install Docker Desktop / Engine for your OS: https://docs.docker.com/get-docker/' ;;
+  esac
+}
+
+cmd_doctor() {
+  echo "WordPress Agency Kit — doctor"
+  echo "Kit:     $KIT_ROOT"
+  echo "Clients: $CLIENTS_DIR"
+  echo
+  local errors=0
+
+  if need_cmd git; then ok "git $(git --version | head -1)"; else fail "git not found — https://git-scm.com/downloads"; errors=$((errors+1)); fi
+
+  if need_cmd docker; then
+    ok "docker $(docker --version 2>/dev/null | head -1)"
+    if docker info >/dev/null 2>&1; then
+      ok "Docker daemon is running"
+    else
+      warn "Docker is installed but the daemon is not running — start Docker Desktop"
+      errors=$((errors+1))
+    fi
+  else
+    fail "docker not found"
+    log "$(os_hint_docker)"
+    errors=$((errors+1))
+  fi
+
+  if docker compose version >/dev/null 2>&1; then
+    ok "docker compose $(docker compose version --short 2>/dev/null || echo v2)"
+  elif need_cmd docker-compose; then
+    warn "legacy docker-compose found — prefer Docker Compose v2: docker compose"
+  else
+    fail "docker compose (v2) not found"
+    errors=$((errors+1))
+  fi
+
+  if need_cmd unzip; then ok "unzip"; else warn "unzip not found (needed for --from html|wp-zip)"; fi
+  if need_cmd node; then ok "node $(node -v) (optional, for some WP skills)"; else log "node optional — https://nodejs.org/"; fi
+  if need_cmd php; then ok "php $(php -r 'echo PHP_VERSION;') (optional, host PHP)"; else log "host php optional — WP runs inside Docker"; fi
+
+  echo
+  if [[ "$errors" -eq 0 ]]; then
+    echo "Ready. Next:  ./bin/wp-agency new <client-slug> --from empty"
+    return 0
+  fi
+  echo "Not ready ($errors issue(s)). Install the [x] items, re-run doctor, then create a project."
+  return 1
+}
+
+used_ports() {
+  mkdir -p "$CLIENTS_DIR"
+  # shellcheck disable=SC2016
+  find "$CLIENTS_DIR" -maxdepth 2 -name .env -print0 2>/dev/null \
+    | xargs -0 grep -hE '^WP_PORT=|^PMA_PORT=' 2>/dev/null \
+    | sed 's/.*=//' \
+    | grep -E '^[0-9]+$' \
+    | sort -n \
+    | uniq
+}
+
+next_wp_port() {
+  local used p=8080
+  used="$(used_ports || true)"
+  while echo "$used" | grep -qx "$p"; do
+    p=$((p + 2))
+  done
+  echo "$p"
+}
+
+cmd_ports() {
+  echo "Client projects: $CLIENTS_DIR"
+  mkdir -p "$CLIENTS_DIR"
+  local found=0
+  shopt -s nullglob
+  for envf in "$CLIENTS_DIR"/*/.env; do
+    found=1
+    slug="$(basename "$(dirname "$envf")")"
+    wp="$(grep -E '^WP_PORT=' "$envf" | cut -d= -f2 || true)"
+    pma="$(grep -E '^PMA_PORT=' "$envf" | cut -d= -f2 || true)"
+    printf '  %-28s  WP %s  phpMyAdmin %s\n' "$slug" "${wp:--}" "${pma:--}"
+  done
+  if [[ "$found" -eq 0 ]]; then
+    echo "  (no client .env files yet)"
+  fi
+  echo "Next free WP_PORT: $(next_wp_port)"
+}
+
+rand_pass() {
+  if need_cmd openssl; then
+    openssl rand -base64 18 | tr -d '/+=' | cut -c1-20
+  else
+    date +%s | shasum | cut -c1-20
+  fi
+}
+
+cmd_new() {
+  local slug="${1:-}"
+  shift || true
+  local from="empty" zip=""
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --from) from="${2:-}"; shift 2 ;;
+      --zip)  zip="${2:-}"; shift 2 ;;
+      *) echo "Unknown flag: $1"; usage; return 2 ;;
+    esac
+  done
+
+  if [[ -z "$slug" ]]; then
+    echo "Missing slug. Example: wp-agency new acme-bakery --from empty"
+    return 2
+  fi
+  if [[ ! "$slug" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+    echo "Slug must be lowercase letters, numbers, hyphens (got: $slug)"
+    return 2
+  fi
+  case "$from" in
+    empty|html|wp-zip) ;;
+    *) echo "--from must be empty | html | wp-zip"; return 2 ;;
+  esac
+  if [[ "$from" != empty && -z "$zip" ]]; then
+    echo "--from $from requires --zip /path/to/file.zip"
+    return 2
+  fi
+  if [[ -n "$zip" && ! -f "$zip" ]]; then
+    echo "Zip not found: $zip"
+    return 2
+  fi
+
+  mkdir -p "$CLIENTS_DIR"
+  local dest="$CLIENTS_DIR/$slug"
+  if [[ -e "$dest" ]]; then
+    echo "Already exists: $dest"
+    return 1
+  fi
+
+  local wp_port pma_port dbpass rootpass
+  wp_port="$(next_wp_port)"
+  pma_port=$((wp_port + 1))
+  dbpass="$(rand_pass)"
+  rootpass="$(rand_pass)"
+
+  mkdir -p "$dest"
+  # copy template excluding nothing essential
+  cp "$KIT_ROOT/templates/docker/docker-compose.yml" "$dest/"
+  mkdir -p "$dest/config" "$dest/themes" "$dest/plugins" "$dest/html-template"
+  cp "$KIT_ROOT/templates/docker/config/php.ini" "$dest/config/"
+  cp -R "$KIT_ROOT/templates/docker/themes/." "$dest/themes/"
+  cp -R "$KIT_ROOT/templates/docker/plugins/." "$dest/plugins/"
+  cp "$KIT_ROOT/templates/docker/.env.example" "$dest/.env.example"
+
+  cat > "$dest/.env" <<EOF
+COMPOSE_PROJECT_NAME=$slug
+WP_PORT=$wp_port
+PMA_PORT=$pma_port
+DB_NAME=wordpress
+DB_USER=wpuser
+DB_PASSWORD=$dbpass
+DB_ROOT_PASSWORD=$rootpass
+WP_TABLE_PREFIX=wp_
+EOF
+
+  if [[ -n "$zip" ]]; then
+    mkdir -p "$dest/_incoming"
+    case "$from" in
+      html)
+        unzip -q "$zip" -d "$dest/html-template"
+        ;;
+      wp-zip)
+        unzip -q "$zip" -d "$dest/_incoming/wp-zip"
+        # Heuristic: find wp-content
+        local wpc
+        wpc="$(find "$dest/_incoming/wp-zip" -type d -name wp-content 2>/dev/null | head -1 || true)"
+        if [[ -n "$wpc" ]]; then
+          [[ -d "$wpc/themes" ]] && rsync -a "$wpc/themes/" "$dest/themes/"
+          [[ -d "$wpc/plugins" ]] && rsync -a "$wpc/plugins/" "$dest/plugins/"
+        else
+          log "No wp-content/ found in zip — files left in _incoming/wp-zip for the agent to sort"
+        fi
+        ;;
+    esac
+  fi
+
+  local year
+  year="$(date +%Y)"
+  cat > "$dest/CLAUDE.md" <<EOF
+# $slug — client project
+
+Created by WordPress Agency Kit ($year)
+
+| | |
+|---|---|
+| Slug | \`$slug\` |
+| Start mode | \`$from\` |
+| WordPress | http://localhost:$wp_port |
+| phpMyAdmin | http://localhost:$pma_port |
+| Compose project | \`$slug\` |
+
+## Start locally
+
+\`\`\`bash
+cd "$dest"
+docker compose up -d
+# Open http://localhost:$wp_port — complete WP installer (empty) or log in (imported)
+\`\`\`
+
+WP-CLI (inside wordpress container):
+
+\`\`\`bash
+docker compose exec wordpress bash -c "curl -sO https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar"
+docker compose exec wordpress bash -c "php wp-cli.phar --allow-root --path=/var/www/html <command>"
+\`\`\`
+
+## Layout
+
+- \`themes/\` bind-mount → wp-content/themes
+- \`plugins/\` bind-mount → wp-content/plugins
+- \`html-template/\` read-only HTML reference (do not edit)
+- Sibling PHP apps (POS/billing) are NOT WordPress plugins — see skill hostinger-mcp-deploy
+
+## Agent
+
+Open this folder in Grok / Claude Code / Cursor / Codex. Follow the kit AGENTS.md (HTML → classic theme, or WP zip import).
+EOF
+
+  # also AGENTS.md pointer in client
+  cat > "$dest/AGENTS.md" <<EOF
+This is a WordPress Agency Kit client project (\`$slug\`).
+
+Read CLAUDE.md in this folder for ports. Follow the kit at:
+$KIT_ROOT/AGENTS.md
+EOF
+
+  echo
+  echo "Created $dest"
+  echo "  WordPress    http://localhost:$wp_port"
+  echo "  phpMyAdmin   http://localhost:$pma_port"
+  echo
+  echo "Next:"
+  echo "  cd \"$dest\""
+  echo "  docker compose up -d"
+}
+
+main() {
+  local cmd="${1:-help}"
+  shift || true
+  case "$cmd" in
+    doctor) cmd_doctor "$@" ;;
+    ports)  cmd_ports "$@" ;;
+    new)    cmd_new "$@" ;;
+    help|-h|--help) usage ;;
+    *) echo "Unknown command: $cmd"; usage; return 2 ;;
+  esac
+}
+
+main "$@"

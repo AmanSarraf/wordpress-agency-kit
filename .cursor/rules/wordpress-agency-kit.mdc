@@ -1,0 +1,7 @@
+---
+description: WordPress Agency Kit — read AGENTS.md; run doctor before new clients
+globs:
+alwaysApply: true
+---
+
+This project is the WordPress Agency Kit. Follow AGENTS.md. Run `./bin/wp-agency doctor` before scaffolding. Client sites go in `../client-projects/<slug>`, not inside this kit. Skills are in `skills/`.

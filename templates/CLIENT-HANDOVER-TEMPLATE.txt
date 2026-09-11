@@ -1,0 +1,93 @@
+================================================================================
+  CLIENT HANDOVER — BILLING / SIBLING PHP APP (HOSTINGER)
+  Client:     [CLIENT_NAME]
+  Domain:     [DOMAIN]
+  Prepared:   [YYYY-MM-DD]
+  Developer:  [AGENCY_NAME]
+================================================================================
+
+IMPORTANT
+---------
+* Contains LIVE passwords. Share only with the business owner.
+* Owner should CHANGE admin password after receiving this file.
+* Do not publish on public Drive / WhatsApp groups.
+* Do not upload this file into public_html.
+
+
+================================================================================
+1) LIVE APP
+================================================================================
+
+  App URL:     https://[DOMAIN]/[APP_PATH]/
+  Login page:  https://[DOMAIN]/[APP_PATH]/login.php
+
+  Public WordPress site (separate):  https://[DOMAIN]/
+
+  App folder on server:  public_html/[APP_FOLDER]/
+  Note: This is NOT a WordPress plugin.
+
+
+================================================================================
+2) ADMIN LOGIN (APPLICATION)
+================================================================================
+
+  Username:  [ADMIN_USER]
+  Password:  [ADMIN_PASSWORD]
+
+  After login: My account → Change password (letters + numbers, 8+ chars).
+  Then create staff under Users — do not share admin with every cashier.
+
+
+================================================================================
+3) DATABASE (OWNER / DEVELOPER ONLY)
+================================================================================
+
+  Database name:  [DB_NAME]
+  Database user:  [DB_USER]
+  Database password:  [DB_PASSWORD]
+
+  Host (PHP on Hostinger):  localhost
+  Host (remote tools):      [DB_HOST_EXTERNAL]
+  Port:  3306
+
+  Hosting username:  [HOSTING_USERNAME]
+
+  WordPress uses a DIFFERENT database — do not mix.
+
+  Open in Hostinger:
+    hPanel → Databases → Management → [DB_NAME] → phpMyAdmin
+
+
+================================================================================
+4) EMERGENCY ADMIN RESET (LOCKED OUT)
+================================================================================
+
+  1. phpMyAdmin → SQL on the APP database (not WordPress)
+  2. Set users.password to a PHP bcrypt hash of a temporary password
+  3. Set must_change_password = 1 (if column exists)
+  4. Login with temp password → forced change → give owner the new password
+
+
+================================================================================
+5) OWNER CHECKLIST
+================================================================================
+
+  [ ] Change admin password
+  [ ] Create staff users
+  [ ] Upload UPI QR / payment settings if applicable
+  [ ] Confirm invoice phone/address
+  [ ] Bookmark login URL on counter devices
+  [ ] Store this file in a password manager; remove from shared desktops
+
+
+================================================================================
+6) SUPPORT
+================================================================================
+
+  Developer:  [AGENCY_NAME] — [SUPPORT_CONTACT]
+  Hostinger hPanel login: owned by client (separate from this app)
+
+
+================================================================================
+END OF HANDOVER
+================================================================================
