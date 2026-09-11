@@ -1,6 +1,12 @@
 # WordPress Agency Kit
 
 <p align="center">
+  <a href="https://amansarraf.github.io/wordpress-agency-kit/"><strong>Documentation site</strong></a>
+  ·
+  <a href="https://github.com/AmanSarraf/wordpress-agency-kit">GitHub</a>
+</p>
+
+<p align="center">
   <img src="docs/assets/workspace.jpg" alt="Laptop on a desk with a website and code open — building WordPress locally" width="920">
 </p>
 <p align="center"><sub>Photo: <a href="https://unsplash.com/photos/cGwfkwHdeLs">Christopher Gower</a> on <a href="https://unsplash.com">Unsplash</a></sub></p>

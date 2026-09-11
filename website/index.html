@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WordPress Agency Kit</title>
+  <meta name="description" content="Your AI teammate for everyday WordPress work. Clone, open in Codex, Claude, Cursor, or Grok, and start a local client site in minutes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="./">WordPress Agency Kit</a>
+    <nav>
+      <a href="#start">Start</a>
+      <a href="#agents">Agents</a>
+      <a href="#ask">Ask</a>
+      <a href="https://github.com/AmanSarraf/wordpress-agency-kit">GitHub</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">For WordPress builders using AI</p>
+      <h1>Everyday WordPress work,<br>with an AI teammate.</h1>
+      <p class="lede">
+        Clone the kit. Open the folder in Codex, Claude Code, Cursor, Grok, or Copilot.
+        Start a local client site in a few minutes.
+      </p>
+      <p class="actions">
+        <a class="btn primary" href="https://github.com/AmanSarraf/wordpress-agency-kit">View on GitHub</a>
+        <a class="btn" href="#start">Get started</a>
+      </p>
+    </section>
+
+    <section id="start">
+      <h2>Start in 5 minutes</h2>
+      <ol class="steps">
+        <li>
+          <strong>Copy the kit</strong>
+          <pre><code>git clone https://github.com/AmanSarraf/wordpress-agency-kit.git
+cd wordpress-agency-kit</code></pre>
+        </li>
+        <li>
+          <strong>Check your computer</strong>
+          <pre><code>./bin/wp-agency doctor</code></pre>
+          <p class="note">If something is missing (often Docker), it tells you what to install. Run doctor again until it says ready.</p>
+        </li>
+        <li>
+          <strong>Start a site</strong>
+          <pre><code>./bin/wp-agency new my-shop --from empty
+cd ../client-projects/my-shop
+docker compose up -d</code></pre>
+          <p class="note">Open <a href="http://localhost:8080">http://localhost:8080</a> and finish the WordPress welcome screens.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="agents">
+      <h2>Open it in your coding agent</h2>
+      <p>Treat this folder the way you’d add a skill pack: <strong>the project is the skill.</strong></p>
+      <table>
+        <thead>
+          <tr><th>You use</th><th>Do this</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Codex CLI</td><td><code>cd wordpress-agency-kit</code> then <code>codex</code></td></tr>
+          <tr><td>Claude Code</td><td><code>cd wordpress-agency-kit</code> then <code>claude</code></td></tr>
+          <tr><td>Grok</td><td>Open this folder as the workspace</td></tr>
+          <tr><td>Cursor</td><td>File → Open Folder → <code>wordpress-agency-kit</code></td></tr>
+          <tr><td>Copilot / others</td><td>Open this folder; they pick up <code>AGENTS.md</code></td></tr>
+        </tbody>
+      </table>
+      <p>Then say:</p>
+      <blockquote>Get my machine ready, then start a new client called sunrise-cafe.</blockquote>
+    </section>
+
+    <section id="ask">
+      <h2>What you can ask</h2>
+      <table>
+        <thead>
+          <tr><th>You have</th><th>You run</th><th>Then tell the agent</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nothing yet</td>
+            <td><code>./bin/wp-agency new cafe --from empty</code></td>
+            <td>Walk me through the local site.</td>
+          </tr>
+          <tr>
+            <td>An HTML template zip</td>
+            <td><code>./bin/wp-agency new cafe --from html --zip ~/Downloads/theme.zip</code></td>
+            <td>Turn this template into a WordPress theme.</td>
+          </tr>
+          <tr>
+            <td>A copy of a live WordPress site</td>
+            <td><code>./bin/wp-agency new cafe --from wp-zip --zip ~/Downloads/site.zip</code></td>
+            <td>Get this dump running locally.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Several clients at once</h2>
+      <p>Each site gets its own folder and local address (8080, then 8082, …).</p>
+      <pre><code>wordpress-agency-kit/          ← you cloned this
+../client-projects/
+    my-shop/
+    sunrise-cafe/</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <span>MIT · <a href="https://github.com/AmanSarraf/wordpress-agency-kit">AmanSarraf/wordpress-agency-kit</a></span>
+  </footer>
+</body>
+</html>
