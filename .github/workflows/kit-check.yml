@@ -1,0 +1,42 @@
+name: Kit check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skill files have a name and description
+        run: |
+          missing=0
+          while IFS= read -r f; do
+            if ! grep -q '^name:' "$f" || ! grep -q '^description:' "$f"; then
+              echo "Missing frontmatter: $f"
+              missing=1
+            fi
+          done < <(find skills -name SKILL.md)
+          exit "$missing"
+
+      - name: CLI help and doctor
+        run: |
+          chmod +x bin/wp-agency
+          ./bin/wp-agency help
+          ./bin/wp-agency doctor || true
+
+      - name: Scaffold two projects with unique ports
+        env:
+          WP_AGENCY_CLIENTS_DIR: ${{ runner.temp }}/clients
+        run: |
+          mkdir -p "$WP_AGENCY_CLIENTS_DIR"
+          ./bin/wp-agency new ci-one --from empty
+          ./bin/wp-agency new ci-two --from empty
+          p1=$(grep '^WP_PORT=' "$WP_AGENCY_CLIENTS_DIR/ci-one/.env" | cut -d= -f2)
+          p2=$(grep '^WP_PORT=' "$WP_AGENCY_CLIENTS_DIR/ci-two/.env" | cut -d= -f2)
+          test -n "$p1" && test -n "$p2" && test "$p1" != "$p2"
+          (cd "$WP_AGENCY_CLIENTS_DIR/ci-one" && docker compose config >/dev/null)
+          echo "Ports $p1 and $p2 — compose config OK"
